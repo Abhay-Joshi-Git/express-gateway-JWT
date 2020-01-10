@@ -1,0 +1,38 @@
+http:
+  port: 8080
+apiEndpoints:
+  cust:
+    host: 'localhost'
+    paths:
+      - '/customers'
+      - '/customers/*'
+  order:
+    host: 'localhost'
+    paths: '/orders*'
+serviceEndpoints:
+  customers:
+    url: 'http://localhost:3000/'
+  orders:
+    url: 'http://localhost:4000/'
+policies:
+  - cors
+  - expression
+  - jwt
+  - proxy
+pipelines:
+  - name: customers
+    apiEndpoints:
+      - cust
+    policies:
+      - proxy:
+        - action:
+            serviceEndpoint: customers
+            changeOrigin: true
+  - name: orders
+    apiEndpoints:
+      - order
+    policies:
+      - proxy:
+        - action:
+            serviceEndpoint: orders
+            changeOrigin: true
